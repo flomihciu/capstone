@@ -1,3 +1,6 @@
+# Fetch available AZs dynamically
+data "aws_availability_zones" "available" {}
+
 # VPC
 resource "aws_vpc" "main_vpc" {
   cidr_block           = "10.88.0.0/16"
@@ -5,7 +8,8 @@ resource "aws_vpc" "main_vpc" {
   enable_dns_support   = true
 
   tags = {
-    Name = "team-rocket-vpc"
+    Name   = "team-rocket-vpc"
+    Region = var.aws_region
   }
 }
 
@@ -18,59 +22,59 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-# Public Subnet 1
+# Public Subnet 1 (AZ index 0)
 resource "aws_subnet" "public_subnet_1" {
   vpc_id                  = aws_vpc.main_vpc.id
   cidr_block              = "10.88.1.0/24"
-  availability_zone       = "us-east-1a"
+  availability_zone       = data.aws_availability_zones.available.names[0]
   map_public_ip_on_launch = true
 
   tags = {
-    Name                                    = "team-rocket-public-subnet-1"
-    "kubernetes.io/role/elb"               = "1"
+    Name                                     = "team-rocket-public-subnet-1"
+    "kubernetes.io/role/elb"                = "1"
     "kubernetes.io/cluster/team-rocket-eks" = "owned"
   }
 }
 
-# Public Subnet 2
+# Public Subnet 2 (AZ index 1)
 resource "aws_subnet" "public_subnet_2" {
   vpc_id                  = aws_vpc.main_vpc.id
   cidr_block              = "10.88.2.0/24"
-  availability_zone       = "us-east-1b"
+  availability_zone       = data.aws_availability_zones.available.names[1]
   map_public_ip_on_launch = true
 
   tags = {
-    Name                                    = "team-rocket-public-subnet-2"
-    "kubernetes.io/role/elb"               = "1"
+    Name                                     = "team-rocket-public-subnet-2"
+    "kubernetes.io/role/elb"                = "1"
     "kubernetes.io/cluster/team-rocket-eks" = "owned"
   }
 }
 
-# Private Subnet 1
+# Private Subnet 1 (AZ index 0)
 resource "aws_subnet" "private_subnet_1" {
   vpc_id                  = aws_vpc.main_vpc.id
   cidr_block              = "10.88.3.0/24"
-  availability_zone       = "us-east-1a"
+  availability_zone       = data.aws_availability_zones.available.names[0]
   map_public_ip_on_launch = false
 
   tags = {
-    Name                                        = "team-rocket-private-subnet-1"
-    "kubernetes.io/role/internal-elb"          = "1"
-    "kubernetes.io/cluster/team-rocket-eks"     = "owned"
+    Name                                     = "team-rocket-private-subnet-1"
+    "kubernetes.io/role/internal-elb"       = "1"
+    "kubernetes.io/cluster/team-rocket-eks" = "owned"
   }
 }
 
-# Private Subnet 2
+# Private Subnet 2 (AZ index 1)
 resource "aws_subnet" "private_subnet_2" {
   vpc_id                  = aws_vpc.main_vpc.id
   cidr_block              = "10.88.4.0/24"
-  availability_zone       = "us-east-1b"
+  availability_zone       = data.aws_availability_zones.available.names[1]
   map_public_ip_on_launch = false
 
   tags = {
-    Name                                        = "team-rocket-private-subnet-2"
-    "kubernetes.io/role/internal-elb"          = "1"
-    "kubernetes.io/cluster/team-rocket-eks"     = "owned"
+    Name                                     = "team-rocket-private-subnet-2"
+    "kubernetes.io/role/internal-elb"       = "1"
+    "kubernetes.io/cluster/team-rocket-eks" = "owned"
   }
 }
 

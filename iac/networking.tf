@@ -22,7 +22,7 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-# Public Subnet 1 (AZ index 0)
+# Public Subnet 1
 resource "aws_subnet" "public_subnet_1" {
   vpc_id                  = aws_vpc.main_vpc.id
   cidr_block              = "10.88.1.0/24"
@@ -36,7 +36,7 @@ resource "aws_subnet" "public_subnet_1" {
   }
 }
 
-# Public Subnet 2 (AZ index 1)
+# Public Subnet 2
 resource "aws_subnet" "public_subnet_2" {
   vpc_id                  = aws_vpc.main_vpc.id
   cidr_block              = "10.88.2.0/24"
@@ -50,12 +50,12 @@ resource "aws_subnet" "public_subnet_2" {
   }
 }
 
-# Private Subnet 1 (AZ index 0)
+# Private Subnet 1 (updated)
 resource "aws_subnet" "private_subnet_1" {
   vpc_id                  = aws_vpc.main_vpc.id
   cidr_block              = "10.88.3.0/24"
   availability_zone       = data.aws_availability_zones.available.names[0]
-  map_public_ip_on_launch = false
+  map_public_ip_on_launch = true  # <- changed from false to true
 
   tags = {
     Name                                     = "team-rocket-private-subnet-1"
@@ -64,12 +64,12 @@ resource "aws_subnet" "private_subnet_1" {
   }
 }
 
-# Private Subnet 2 (AZ index 1)
+# Private Subnet 2 (updated)
 resource "aws_subnet" "private_subnet_2" {
   vpc_id                  = aws_vpc.main_vpc.id
   cidr_block              = "10.88.4.0/24"
   availability_zone       = data.aws_availability_zones.available.names[1]
-  map_public_ip_on_launch = false
+  map_public_ip_on_launch = true  # <- changed from false to true
 
   tags = {
     Name                                     = "team-rocket-private-subnet-2"

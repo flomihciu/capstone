@@ -1,4 +1,4 @@
-name: Terraform Apply and Kubeconfig Setup
+name: Terraform Apply
 
 on:
   workflow_dispatch:
@@ -45,22 +45,7 @@ jobs:
           terraform output -raw eks_cluster_region > eks_region.txt
         working-directory: ./iac
 
-      - name: Install kubectl
+      - name: Echo Terraform Outputs (Optional)
         run: |
-          KUBECTL_VERSION=$(curl -s https://dl.k8s.io/release/stable.txt)
-          echo "Resolved kubectl version: $KUBECTL_VERSION"
-          curl -LO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
-          chmod +x kubectl
-          sudo mv kubectl /usr/local/bin/
-
-      - name: Update kubeconfig for EKS
-        run: |
-          CLUSTER_NAME=$(cat ./iac/eks_name.txt)
-          CLUSTER_REGION=$(cat ./iac/eks_region.txt)
-
-          aws eks update-kubeconfig \
-            --region "$CLUSTER_REGION" \
-            --name "$CLUSTER_NAME"
-
-      - name: Validate cluster with kubectl
-        run: kubectl get nodes
+          echo "Cluster Name: $(cat ./iac/eks_name.txt)"
+          echo "Region: $(cat ./iac/eks_region.txt)"

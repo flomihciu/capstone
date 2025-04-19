@@ -1,4 +1,4 @@
-name: Terraform Apply
+name: Terraform Apply and Kubeconfig Setup
 
 on:
   workflow_dispatch:
@@ -38,3 +38,27 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve -var="FLO_DB_USERNAME=${{ secrets.FLO_DB_USERNAME }}" -var="FLO_DB_PASSWORD=${{ secrets.FLO_DB_PASSWORD }}"
         working-directory: ./iac
+
+      - name: Capture Terraform Outputs
+        run: |
+          terraform output -raw eks_cluster_name > eks_name.txt
+          terraform output -raw eks_cluster_region > eks_region.txt
+        working-directory: ./iac
+
+      - name: Install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
+
+      - name: Update kubeconfig for EKS
+        run: |
+          CLUSTER_NAME=$(cat ./iac/eks_name.txt)
+          CLUSTER_REGION=$(cat ./iac/eks_region.txt)
+
+          aws eks update-kubeconfig \
+            --region "$CLUSTER_REGION" \
+            --name "$CLUSTER_NAME"
+
+      - name: Validate cluster with kubectl
+        run: kubectl get nodes

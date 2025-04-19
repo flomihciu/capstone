@@ -16,12 +16,12 @@ variable "db_instance_type" {
   default     = "db.t3.micro"
 }
 
-variable "DB_USERNAME" {
+variable "FLO_DB_USERNAME" {
   description = "Database username for RDS"
   type        = string
 }
 
-variable "DB_PASSWORD" {
+variable "FLO_DB_PASSWORD" {
   description = "Database password for RDS"
   type        = string
   sensitive   = true

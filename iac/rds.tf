@@ -3,8 +3,8 @@ resource "aws_db_instance" "team_rocket_db" {
   engine                 = "postgres"
   instance_class         = var.db_instance_type
   allocated_storage      = 20
-  username               = var.DB_USERNAME
-  password               = var.DB_PASSWORD
+  username               = var.FLO_DB_USERNAME
+  password               = var.FLO_DB_PASSWORD
   publicly_accessible    = false
   skip_final_snapshot    = true
 
